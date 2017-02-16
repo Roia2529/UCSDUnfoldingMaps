@@ -8,7 +8,7 @@ import java.util.List;
 
 //Processing library
 import processing.core.PApplet;
-
+import processing.core.PFont;
 //Unfolding libraries
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.marker.Marker;
@@ -33,7 +33,8 @@ public class EarthquakeCityMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFLINE, change the value of this variable to true
-	private static final boolean offline = false;
+	//private static final boolean offline = false;
+	private static final boolean offline = true;
 	
 	// Less than this threshold is a light earthquake
 	public static final float THRESHOLD_MODERATE = 5;
@@ -49,6 +50,21 @@ public class EarthquakeCityMap extends PApplet {
 	//feed with magnitude 2.5+ Earthquakes
 	private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
 
+	PFont myFont;
+	int yellow = color(255, 255, 0);
+    int red = color(255,0,0);
+    int blue = color(0,0,255);
+	
+	public void fontsetup() {
+	  size(200, 200);
+	  // Uncomment the following two lines to see the available fonts 
+	  String[] fontList = PFont.list();
+	  printArray(fontList);
+	  myFont = createFont("Georgia", 32);
+	  //textFont(myFont);
+	  //textAlign(CENTER, CENTER);
+	  //text("!@#$%", width/2, height/2);
+	}
 	
 	public void setup() {
 		size(950, 600, OPENGL);
@@ -77,17 +93,43 @@ public class EarthquakeCityMap extends PApplet {
 	    // in the features, and (2) how to get one property and use it
 	    if (earthquakes.size() > 0) {
 	    	PointFeature f = earthquakes.get(0);
-	    	System.out.println(f.getProperties());
+	    	//System.out.println(f.getProperties());
 	    	Object magObj = f.getProperty("magnitude");
 	    	float mag = Float.parseFloat(magObj.toString());
+	    	
 	    	// PointFeatures also have a getLocation method
 	    }
 	    
 	    // Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
 	    
+	    List<Marker> PFmarkers = new ArrayList<Marker>();
 	    //TODO: Add code here as appropriate
+	    for(PointFeature tempPF: earthquakes)
+	    {
+	    	Object magObj = tempPF.getProperty("magnitude");
+	    	float mag = Float.parseFloat(magObj.toString());
+	    	SimplePointMarker tempSPMarker = new SimplePointMarker(tempPF.getLocation(),tempPF.getProperties());
+	    	if(mag<4.0)
+	    	{
+	    		tempSPMarker.setColor(blue);
+	    		tempSPMarker.setRadius(7);
+	    	}
+	    	else if(mag>4.9)
+	    	{
+	    		tempSPMarker.setColor(red);
+	    		tempSPMarker.setRadius(14);
+	    	}
+	    	else
+	    	{
+	    		tempSPMarker.setColor(yellow);
+	    		tempSPMarker.setRadius(10);
+	    	}
+	    	PFmarkers.add(tempSPMarker);
+		    
+	    }
+	    map.addMarkers(PFmarkers);
+	    //fontsetup();
 	}
 		
 	// A suggested helper method that takes in an earthquake feature and 
@@ -98,6 +140,9 @@ public class EarthquakeCityMap extends PApplet {
 		// finish implementing and use this method, if it helps.
 		return new SimplePointMarker(feature.getLocation());
 	}
+	
+	
+	
 	
 	public void draw() {
 	    background(10);
@@ -111,6 +156,25 @@ public class EarthquakeCityMap extends PApplet {
 	private void addKey() 
 	{	
 		// Remember you can use Processing's graphics methods here
+		fill(37,216,198);
+		rect(15, 50, 160, 300);
+		
+		textSize(16);
+		fill(0);
+		text("Earthquake Key",30, 90);
+		
+		fill(red);
+		ellipse(35, 130, 15, 15);
+		fill(yellow);
+		ellipse(35, 170, 13, 13);
+		fill(blue);
+		ellipse(35, 210, 10, 10);
+		
+		fill(0);
+		textSize(14);
+		text("5.0+ Magnitude ",50, 137); 
+		text("4.0+ Magnitude ",50, 177);
+		text("Magnitude < 4.0",50, 215);
 	
 	}
 }

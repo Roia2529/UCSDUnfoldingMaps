@@ -80,6 +80,15 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	// You might find the getters below helpful.
 	private void colorDetermine(PGraphics pg) {
 		//TODO: Implement this method
+		float depth = this.getDepth();
+		
+		//Deep = purple, intermediate = blue, shallow = green
+		if(depth>250)
+			pg.fill(255, 0, 0);
+		else if(depth<70)
+			pg.fill(0, 255, 0);
+		else
+			pg.fill(0, 0, 255);
 	}
 	
 	
@@ -102,6 +111,10 @@ public abstract class EarthquakeMarker extends SimplePointMarker
 	
 	public float getRadius() {
 		return Float.parseFloat(getProperty("radius").toString());
+	}
+	
+	public boolean getRecent() {
+		return getProperty("age").toString().equals("Past Day");
 	}
 	
 	public boolean isOnLand()

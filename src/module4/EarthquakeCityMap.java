@@ -35,7 +35,8 @@ public class EarthquakeCityMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFILINE, change the value of this variable to true
-	private static final boolean offline = false;
+	//private static final boolean offline = false;
+	private static final boolean offline = true;
 	
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
@@ -77,7 +78,7 @@ public class EarthquakeCityMap extends PApplet {
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
 		//earthquakesURL = "test1.atom";
-		//earthquakesURL = "test2.atom";
+		earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
 		//earthquakesURL = "quiz1.atom";
@@ -134,24 +135,36 @@ public class EarthquakeCityMap extends PApplet {
 	private void addKey() {	
 		// Remember you can use Processing's graphics methods here
 		fill(255, 250, 240);
-		rect(25, 50, 150, 250);
+		rect(25, 50, 150, 450);
 		
 		fill(0);
 		textAlign(LEFT, CENTER);
 		textSize(12);
 		text("Earthquake Key", 50, 75);
 		
-		fill(color(255, 0, 0));
-		ellipse(50, 125, 15, 15);
+		fill(color(255));
+		rect(45, 120, 15, 15);
+		ellipse(50, 175, 15, 15);
+		//fill(color(255, 255, 0));
+		
 		fill(color(255, 255, 0));
-		ellipse(50, 175, 10, 10);
+		triangle(42, 233, 50, 220, 58,233);
+		
+		fill(color(0, 255, 0));
+		ellipse(50, 275, 15, 15);
 		fill(color(0, 0, 255));
-		ellipse(50, 225, 5, 5);
+		ellipse(50, 300, 15, 15);
+		fill(color(255, 0, 0));
+		ellipse(50, 325, 15, 15);
 		
 		fill(0, 0, 0);
-		text("5.0+ Magnitude", 75, 125);
-		text("4.0+ Magnitude", 75, 175);
-		text("Below 4.0", 75, 225);
+		text("Ocean Quake", 75, 125);
+		text("Land Quake", 75, 175);
+		text("City ", 75, 225);
+		text("shallow ", 75, 275);
+		text("intermediate ", 75, 300);
+		text("deep", 75, 325);
+		
 	}
 
 	
@@ -163,9 +176,12 @@ public class EarthquakeCityMap extends PApplet {
 	private boolean isLand(PointFeature earthquake) {
 		
 		// IMPLEMENT THIS: loop over all countries to check if location is in any of them
-		
+		for(Marker country : this.countryMarkers)
+		{
 		// TODO: Implement this method using the helper method isInCountry
-		
+			if(this.isInCountry(earthquake, country))
+				return true;
+		}
 		// not inside any country
 		return false;
 	}
@@ -179,6 +195,25 @@ public class EarthquakeCityMap extends PApplet {
 	private void printQuakes() 
 	{
 		// TODO: Implement this method
+		int i=0;
+		int j=this.quakeMarkers.size();
+		for(Marker country:this.countryMarkers)
+		{
+			i=0;
+			for(Marker quake:this.quakeMarkers)
+			{
+				if(quake.getClass()==LandQuakeMarker.class &&
+						quake.getProperty("country").equals(country.getProperty("name")))
+					i++;
+				//else
+				//	j++;
+			}
+			if(i!=0)
+				System.out.println(country.getProperty("name")+": "+i);
+				j-=i;
+			
+		}
+		System.out.println("OCEAN QUAKES: "+ j);
 	}
 	
 	
